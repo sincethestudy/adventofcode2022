@@ -8,28 +8,24 @@ fn main() {
 
   let split = contents.split("\n");
 
-
-  let mut scores = HashMap::new();
-  scores.insert(String::from("X"), 1);
-  scores.insert(String::from("Y"), 2);
-  scores.insert(String::from("Z"), 3);
-
   let mut outcomes = HashMap::new();
-  outcomes.insert(String::from("A X"), 4);
-  outcomes.insert(String::from("A Y"), 8);
-  outcomes.insert(String::from("A Z"), 3);
+  outcomes.insert(String::from("A X"), 3);
+  outcomes.insert(String::from("A Y"), 4);
+  outcomes.insert(String::from("A Z"), 8);
   outcomes.insert(String::from("B X"), 1);
   outcomes.insert(String::from("B Y"), 5);
   outcomes.insert(String::from("B Z"), 9);
-  outcomes.insert(String::from("C X"), 7);
-  outcomes.insert(String::from("C Y"), 2);
-  outcomes.insert(String::from("C Z"), 6);
+  outcomes.insert(String::from("C X"), 2);
+  outcomes.insert(String::from("C Y"), 6);
+  outcomes.insert(String::from("C Z"), 7);
 
   let mut total = 0;
+  let mut mapped = 0;
   for i in split {
-      println!("{i}");
+      mapped = outcomes.get(i).copied().unwrap_or(0);
+      println!("{i} and the score is : {mapped}");
 
-      total += outcomes.get(i).copied().unwrap_or(0);
+      total += mapped;
   }
 
   println!("total: {}", total);
