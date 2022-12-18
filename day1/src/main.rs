@@ -21,12 +21,27 @@ fn main() {
     curper += curcal
   }
 
-  let mut most = 0;
-
+  let mut topthree: [i32; 3] = [0, 0, 0];
+  let mut vallow = topthree[0];
+  let mut idlow = 0;
   for i in &v {
-    println!("{i}");
-    most = cmp::max(most, *i);
+    //find index of lowest num
+    vallow = topthree[0];
+    for j in 0..3 {
+      if topthree[j] <= vallow {
+        vallow = topthree[j];
+        idlow = j;
+      }
+    }
+   
+    println!("lowest value: {vallow}"); 
+    if *i > vallow {
+      println!("replacing lowest value with: {i}");
+      //replace the lowest index with *i
+      topthree[idlow] = *i 
+      
+    }
   }
-  
-  println!("the highest calories is: {most}"); 
+  let combined = topthree[0] + topthree[1] + topthree[2];
+  println!("{combined}");
 }
