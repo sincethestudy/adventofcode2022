@@ -14,46 +14,53 @@ fn main() {
     let mut splitpoint = 0;
     
     let mut total = 0;
+  
+    let mut group = 0;
+    let mut rucks = ["temp", "temp", "temp"];
 
-    for line in split {
-      length = line.len();
-      splitpoint = length/2;
+    let mut common = 'a';
+
+    for line in split { 
+      rucks[group] = line;
+      group += 1;
       
-      let fh = &line[..splitpoint];
-      let sh = &line[splitpoint..];
-      
-      if fh.len() == 0{
-        println!("tony");
+      if group != 3{
         continue;
-      }
-      println!("{fh} {sh}");
-      
-      let it: char = find_common_char(fh, sh);
-      let idx = items.find(it);
-      
-      match idx {
-        Some(p) => {
-          total+=p+1;
-          println!("{p}");
-        },
-        None => { 
-          println!("not found");
-          continue
-        },
-      }
-    } 
-  println!("{total}");
+      }  
+      else {
+        common = find_common_char(rucks[0], rucks[1], rucks[2]);
+        println!("{common}");
+        group = 0;                
+
+        let idx = items.find(common);
+
+        match idx {
+          Some(p) => {
+            total += p+1;
+            println!("{p}");
+          },
+          None => continue,
+        }
+      }   
+    }
+
+  println!("{total}"); 
 }
 
 
-fn find_common_char(f: &str, s: &str) -> char {
+fn find_common_char(f: &str, s: &str, r: &str) -> char {
   let mut ma: char = 'a'; 
   for i in f.chars(){
     for j in s.chars(){
-      if i == j {
-        ma = i;
-        println!("{i}");
-        return ma;
+      for k in r.chars(){
+        
+        if i == j && i == k {
+          ma = i;
+          println!("{i}");
+          return ma;
+       
+
+         }
       }
     }
   }
