@@ -60,16 +60,24 @@ fn main() {
     let mut popped: u32 = 0;
     let mut pushed: u32 = 0;
     //do the move
+    
+    let mut moving: Vec<u32> = Vec::new();
+
     for k in 0..todo[0] {
       
       println!("the top of {} is {}", todo[1], array[todo[1]-1].last().unwrap()); 
       popped = array[todo[1]-1].pop().unwrap();
       println!("popped: {}", popped);
-
-      array[todo[2]-1].push(popped);
+      moving.push(popped);
+      //array[todo[2]-1].push(popped);
       
       println!("moved {} from {} to {}", popped, todo[1], todo[2]);
       //println!("moving {} from {} to {}", todo[0], array[todo[1]-1].pop().unwrap(), todo[2]); 
+    }
+
+    for k in 0..todo[0] {
+      array[todo[2]-1].push(moving.pop().unwrap());  
+
     }
   }
   
