@@ -17,30 +17,35 @@ fn main() {
 
   //add files in the current directory
   for line in lines {
-    let first = line.split(" ").next().unwrap();
+    let mut firstIter = line.split(" ");
+    let first = firstIter.next().unwrap();
+    let second = firstIter.next().unwrap();
+    
+    match firstIter.next() {
+      Some(third) => {
+        // check for command
+        if line.chars().nth(2).unwrap() == 'c' {
+          println!("change directory: {} {} {}",first, second, third);
 
-    if line.chars().nth(0).unwrap().is_numeric() {
-      let value = line.split(" ").next().unwrap().parse::<usize>().unwrap();
-      let name = line.split(" ").nth(1).unwrap();
-      println!("its a node with size: {}", first);
-
-      currentNode.add_child(String::from(name), value)
+          if third == ".." {
+            println!("implement up a dir");
+          }
+          else {
+            currentNode.add_child(third.to_string(), 0);
+            currentNode = currentNode.children.get_mut(third).unwrap();
+          }
+        }
+      },
+      None => //do nothinig
+        ()
     }
 
-    // check for change directory
-    
 
-
-
-
-
+    if line.chars().nth(0).unwrap().is_numeric() {
+      currentNode.size += first.parse::<usize>().unwrap();
+    }
 
   }
-
-
-
-
-
   println!("{:?}", root);
 
 }
