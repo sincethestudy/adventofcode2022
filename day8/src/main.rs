@@ -1,3 +1,5 @@
+use std::thread::current;
+
 fn main() {
     let input: &str = include_str!("input.txt");
     let lines: std::str::Lines  = input.lines();
@@ -20,64 +22,88 @@ fn main() {
         temp += 1;
     }
 
+    let mut topscore = 0;
+
     for i in 0..rows {
         'inner: for j in 0..cols {
-            let mut curvis = true;
             let height = forestMatrix[i][j];
 
+            //downscore
+            let mut downscore = 0;
             
-            for h in i+1..rows{
-                curvis = forestMatrix[h][j]<height && curvis;
+            'downscore: for h in i+1..rows{
+                if i == rows {
+                    break 'downscore;
+                }
+                else if forestMatrix[h][j]<height{
+                    downscore += 1;
+                }
+                else if forestMatrix[h][j]>=height{
+                    downscore += 1;
+                    break 'downscore;
+                } 
             }
 
-            if curvis{
-                visible += 1;
-                // println!("status added from downwards at {} {}", i ,j);
-                continue 'inner;
-            }
-            curvis = true;
-
-            for h in 0..i{
-                curvis = forestMatrix[h][j]<height && curvis;
-            }
-            if curvis{
-                visible += 1;
-                // println!("status added at {} {}", i ,j);
-                continue 'inner;
-            }
-            curvis = true;
-
-            for h in j+1..cols{
-                curvis = forestMatrix[i][h]<height && curvis;
-            }
-            if curvis{
-                visible += 1;
-                // println!("status added at {} {}", i ,j);
-                continue 'inner;
-            }
-            curvis = true;
-
-            for h in 0..j{
-                curvis = forestMatrix[i][h]<height && curvis;
-            }
-            if curvis{
-                visible += 1;
-                // println!("status added at {} {}", i ,j);
-                continue 'inner;
+            //upscore
+            let mut upscore = 0;
+            
+            'upscore: for h in (0..i).rev(){
+                if i == 0 {
+                    break 'upscore;
+                }
+                else if forestMatrix[h][j]<height{
+                    upscore += 1;
+                }
+                else if forestMatrix[h][j]>=height{
+                    upscore += 1;
+                    break 'upscore;
+                } 
             }
 
-
-            if i == 0 || i == (rows) || j == 0 || j == (cols) {
-                visible += 1;
-                println!("got an outer edge {} {}", i, j);
-                continue 'inner;
+            //leftscore
+            let mut leftscore = 0;
+            
+            'leftscore: for h in (0..j).rev(){
+                if j == 0 {
+                    break 'leftscore;
+                }
+                else if forestMatrix[i][h]<height{
+                    leftscore += 1;
+                }
+                else if forestMatrix[i][h]>=height{
+                    leftscore += 1;
+                    break 'leftscore;
+                } 
             }
 
+            //rightscore
+            let mut rightscore = 0;
+            
+            'rightscore: for h in j+1..cols{
+                if j == cols {
+                    break 'rightscore;
+                }
+                else if forestMatrix[i][h]<height{
+                    rightscore += 1;
+                }
+                else if forestMatrix[i][h]>=height{
+                    rightscore += 1;
+                    break 'rightscore;
+                } 
+            }
+
+
+
+            let currentScore = downscore * upscore * leftscore * rightscore;
+            println!("{} {} {} {} {}", currentScore, downscore, upscore, leftscore, rightscore);
+
+
+            topscore = std::cmp::max(topscore, currentScore);
     
         }
     }
 
-    println!("visible: {}", visible);
+    println!("top: {}", topscore);
 
 
 
