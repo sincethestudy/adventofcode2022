@@ -2,7 +2,7 @@ use std::rc::{Rc, Weak};
 use std::cell::RefCell;
 
 struct Node {
-  value: i32,
+  value: RefCell<i32>,
   children: RefCell<Vec<Rc<Node>>>,
   parent: RefCell<Weak<Node>>
 }
@@ -15,25 +15,29 @@ impl Node {
   fn add_child(&self, node: Rc<Node>){
     self.children.borrow_mut().push(node)
   }
+
+  fn add_value(&self, add: i32){
+    *self.value.borrow_mut() += add;
+  }
 }
 
 
 fn main() {
 
   let leaf1 = Rc::new(Node {
-    value: 45,
+    value: RefCell::new(45),
     children: RefCell::new(Vec::new()),
     parent: RefCell::new(Weak::new())
   });
 
   let leaf2 = Rc::new(Node {
-    value: 55,
+    value: RefCell::new(55),
     children: RefCell::new(Vec::new()),
     parent: RefCell::new(Weak::new())
   });
 
   let root = Rc::new(Node {
-    value: 65,
+    value: RefCell::new(65),
     children: RefCell::new(Vec::new()),
     parent: RefCell::new(Weak::new())
   });
