@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::rc::{Rc, Weak};
 use std::cell::RefCell;
 
@@ -22,6 +23,32 @@ impl Node {
   fn add_value(&self, add: i32){
     *self.value.borrow_mut() += add;
   }
+
+  fn traverse<'a>(&self, totalSum: &'a mut i32) -> (i32,&'a mut i32) {
+    // println!("traversing: {}", self.name);
+    let mut localsum = *self.value.borrow();
+
+
+    for child in self.children.borrow().iter() {
+      // println!("child: {}", child.name);
+      // println!("child value: {}", child.value.borrow());
+      let temp = child.traverse(totalSum);
+      localsum += temp.0;
+    }
+
+    let mut localsumsen = totalSum;
+
+    if localsum <= 100000 {
+      println!("return localsum: {}", localsum);
+      // *totalSum.borrow_mut() += localsum;
+      *localsumsen += localsum;
+    }
+
+   
+    println!("return localsumsen: {}", localsumsen);
+
+    (localsum, localsumsen)
+  }
 }
 
 
@@ -37,7 +64,6 @@ fn main() {
     parent: RefCell::new(Weak::new())
   });
 
-  let mut sum = 0;
 
   let mut currentNode = Rc::clone(&root);
 
@@ -56,10 +82,10 @@ fn main() {
           currentNode = thisnode.parent.borrow().upgrade().unwrap();
         }
         else {
-          if *currentNode.value.borrow() <= 100000{
-            println!("adding value: {}", *currentNode.value.borrow());
-            sum += *currentNode.value.borrow();
-          }
+          // if *currentNode.value.borrow() <= 100000{
+          //   println!("adding value: {}", *currentNode.value.borrow());
+          //   sum += *currentNode.value.borrow();
+          // }
 
           let newNode = Rc::new(Node {
             value: RefCell::new(0),
@@ -89,11 +115,11 @@ fn main() {
     }
   }
 
-  for child in root.children.borrow().iter() {
-    println!("child: {}", child.name);
-  }
+  let mut sum = 0;
 
-  // println!("sum: {}", sum);
+  let tony = root.traverse(&mut sum);
+
+  println!("total: {}", tony.1);
 
   // println!("root: {:#?}", root);
 
