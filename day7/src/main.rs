@@ -1,4 +1,3 @@
-use std::borrow::Borrow;
 use std::rc::{Rc, Weak};
 use std::cell::RefCell;
 
@@ -24,30 +23,33 @@ impl Node {
     *self.value.borrow_mut() += add;
   }
 
-  fn traverse<'a>(&self, totalSum: &'a mut i32) -> (i32,&'a mut i32) {
-    // println!("traversing: {}", self.name);
-    let mut localsum = *self.value.borrow();
+  fn total<'a>(&self, totalSum: &'a mut i32) -> &'a mut i32 {    
 
+    *totalSum += *self.value.borrow();
 
     for child in self.children.borrow().iter() {
-      // println!("child: {}", child.name);
-      // println!("child value: {}", child.value.borrow());
-      let temp = child.traverse(totalSum);
+      child.total(totalSum);
+    }
+
+    totalSum
+  }
+
+
+  fn traverse<'a, 'b>(&self, totalSum: &'a mut i32, pos: &'b mut Vec<i32>, need: i32) -> (i32, &'b mut Vec<i32>, i32) {
+    let mut localsum = *self.value.borrow();
+
+    for child in self.children.borrow().iter() {
+      let temp = child.traverse(totalSum, pos, need);
       localsum += temp.0;
     }
 
-    let mut localsumsen = totalSum;
-
-    if localsum <= 100000 {
-      println!("return localsum: {}", localsum);
-      // *totalSum.borrow_mut() += localsum;
-      *localsumsen += localsum;
+    if localsum >= need {
+      // println!("found: {}", self.name);
+      pos.push(localsum);
     }
 
-   
-    println!("return localsumsen: {}", localsumsen);
-
-    (localsum, localsumsen)
+    
+    (localsum, pos, need)
   }
 }
 
@@ -63,6 +65,9 @@ fn main() {
     children: RefCell::new(Vec::new()),
     parent: RefCell::new(Weak::new())
   });
+
+  const MAX: i32 = 70000000;
+  const REQUIRED: i32 = 30000000;
 
 
   let mut currentNode = Rc::clone(&root);
@@ -82,10 +87,6 @@ fn main() {
           currentNode = thisnode.parent.borrow().upgrade().unwrap();
         }
         else {
-          // if *currentNode.value.borrow() <= 100000{
-          //   println!("adding value: {}", *currentNode.value.borrow());
-          //   sum += *currentNode.value.borrow();
-          // }
 
           let newNode = Rc::new(Node {
             value: RefCell::new(0),
@@ -115,11 +116,32 @@ fn main() {
     }
   }
 
+
+  println!("available filespace {}", MAX);
+  println!("required filespace {}", REQUIRED);
+  
+  
+
+  let mut total = 0;
+  let used = root.total(&mut total);
+
+  println!("total used {}", used);
+
+  let left = MAX-*used;
+
+  println!("total left {}", left);
+
+  let todelete = REQUIRED - left;
+
+  println!("total to delete {}", todelete);
+
+  let mut posVecs: Vec<i32> = Vec::new();
   let mut sum = 0;
 
-  let tony = root.traverse(&mut sum);
+  let tony2 = root.traverse(&mut sum, &mut posVecs, todelete);
+  tony2.1.sort();
+  println!("possibles: {:?}", tony2.1);
 
-  println!("total: {}", tony.1);
 
   // println!("root: {:#?}", root);
 
