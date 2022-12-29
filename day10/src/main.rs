@@ -33,46 +33,26 @@ fn main() {
 
     let mut crt: [[i32;40];6] = [[0;40];6];
 
-
     for line in cmds {
         if line == "noop" {
             crt = draw(cycle, x, crt);
-
             cycle += 1 ;
         }
         else {
             crt = draw(cycle, x, crt);
-
             cycle += 1;
             crt = draw(cycle, x, crt);
-
-
             cycle += 1;
-
             x += line.split_whitespace().last().unwrap().parse::<i32>().unwrap();
 
-            // println!("{} {}", cycle, x);
 
         }
 
     }
 
-    let z1 = crt[0].map(|d| if d==1 {'#'} else {'.'});
-    let z2 = crt[1].map(|d| if d==1 {'#'} else {'.'});
-    let z3 = crt[2].map(|d| if d==1 {'#'} else {'.'});
-    let z4 = crt[3].map(|d| if d==1 {'#'} else {'.'});
-    let z5 = crt[4].map(|d| if d==1 {'#'} else {'.'});
-    let z6 = crt[5].map(|d| if d==1 {'#'} else {'.'});
-    
+    for i in 0..6 {
+        println!("{:?}", crt[i]);
+    }
 
-
-
-
-    println!("{:?}", z1);
-    println!("{:?}", z2);
-    println!("{:?}", z3);
-    println!("{:?}", z4);
-    println!("{:?}", z5);
-    println!("{:?}", z6);
 
 }
