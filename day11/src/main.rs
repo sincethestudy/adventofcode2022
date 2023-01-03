@@ -43,7 +43,6 @@ impl Monkey {
                             .unwrap();
                             
         let mut op_prep: Vec<&str> = togo.split(" ").collect::<Vec<&str>>();
-        println!("{:?}", op_prep);
 
         let test = instrs.next().unwrap().split("Test: divisible by ").last().unwrap().parse::<usize>().unwrap();
         let pass = instrs.next().unwrap().split("If true: throw to monkey ").last().unwrap().parse::<usize>().unwrap();
@@ -71,11 +70,9 @@ fn main() {
 
     let mut monkeys: Vec<_> = splitter.map(|a| Monkey::new(a)).collect();
 
-    println!("{:?}", monkeys);
-
     let mut itemstoadd: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
 
-    for i in 0..20 {
+    for i in 0..10000 {
         monkeys.iter_mut().enumerate().for_each(|(j, m)|
             {
                 //add the bagged items
@@ -93,24 +90,24 @@ fn main() {
                         }
                         else{
                             newitem = m.items[item] * m.operation.1;
-                            println!(" mult {} {} ", newitem, m.operation.1);
                         }
                         
                     }
+                
                     else{
                         if m.operation.1 == 0 {
                             newitem = m.items[item] * m.items[item];
                         }
                         else{
                             newitem = m.items[item] + m.operation.1;
-                            println!(" adding {} {} ", newitem, m.operation.1);
                         }
                     }
 
-                    newitem = newitem.div_floor(3);
 
                     let val = newitem.rem_floor(m.test);
-                    println!(" val after % {} {} ", val, newitem);
+
+                    newitem = newitem%9699690;
+
 
                     if val > 0 {
                         itemstoadd[m.fail].push(newitem);
@@ -119,24 +116,17 @@ fn main() {
                         itemstoadd[m.pass].push(newitem);
                     }
 
-                    println!("{:?}" , itemstoadd);
                     m.incr();
                 }
 
+                println!("monkey: {} {:?}",j, m.items);
                 m.items.clear();
-        }
-            
-        ) 
+        });
+
     }
 
     monkeys.iter().for_each(|m| {
         println!("{}", m.inspects)
     });
-
-    println!("{:?}", itemstoadd);
-
-    println!("{:?}", monkeys);
-
-
 
 }
